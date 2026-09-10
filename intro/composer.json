@@ -1,0 +1,10 @@
+{
+    "name": "blang/intro",
+    "description": "ez egy próba",
+    "type": "project",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "require": {
+        "alrik11es/cowsayphp": "^1.2"
+    }
+}
