@@ -143,3 +143,30 @@ Migrációk státuszának lekérdezése:
 ```sh
 php artisan migrate:status
 ```
+
+### Breeze (elsősorban auth céljából):
+```sh
+composer require laravel/breeze
+php artisan breeze:install
+```
+
+### Factory és seeder
+
+Új factory generálása:
+
+```sh
+php artisan make:factory
+```
+
+Adatbázis seedelése DatabaseSeeder.php futtatásával:
+
+```sh
+php artisan db:seed
+```
+
+Migrációk tiszta lappal és DatabaseSeeder.php futtatása:
+
+```sh
+php artisan migrate:fresh --seed
+```
+
