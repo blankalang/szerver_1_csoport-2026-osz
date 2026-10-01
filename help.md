@@ -211,3 +211,18 @@ Létrehoz egy szimbolikus linket a `public/storage` és a `storage/app/public` k
 composer run dev
 ```
 Elindítja a fejlesztői környezetet (Laravel szerver + Vite).
+### Vezérlők generálása
+
+Új vezérlő:
+
+```sh
+php artisan make:controller
+```
+
+(Névkonvenció: pl. `FooController` - empty vagy resource típusú kontroller generálása ajánlott.)
+
+Resource vezérlő adott modell fölött egy paranccsal:
+
+```sh
+php artisan make:controller FooController -r Foo
+```
