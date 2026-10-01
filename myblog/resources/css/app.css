@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+h1 {
+    /* a @apply text-2xl text-sky-500 py-4; azt jelenti, hogy a h1 elemre alkalmazzuk a Tailwind CSS osztályokat, amelyek nagyobb méretű szöveget, kék színt és paddingot adnak a tetején és alján. */
+
+    @apply text-2xl text-sky-500 py-4;
+}
+
+a {
+    /*a @apply text-sky-500 hover:underline; azt jelenti, hogy az a elemre alkalmazzuk a Tailwind CSS osztályokat, amelyek kék színt adnak a linknek, és amikor az egér fölé viszik, aláhúzást kap. */
+    @apply text-sky-500 hover:underline;
+}
