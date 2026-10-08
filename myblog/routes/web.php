@@ -1,36 +1,17 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Models\Post;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-// //1
-// Route::get('/contact', function () {
-//     return view('contact');
-// });
-
-// //2
-// Route::get('/contact/{id}', function ($id) {
-// return $id;
-// });
-
-// //3
-// Route::get('/create-post', function () {
-//     return 'létrehoztál egy postot';
-// });
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
 
 
-
-//A Route::get('/', function () { azt jelenti, hogy amikor a felhasználó a gyökér URL-re (/) navigál, akkor a megadott függvény fut le, ami lekéri az összes posztot az adatbázisból a Post modell segítségével, majd visszaadja a 'posts.index' nézetet, és átadja neki a lekért posztokat egy 'posts' nevű változóban. Nemsokára ugyanezt a logikát áthelyezzük egy PostController osztályba, hogy a kódunk rendezettebb és karbantarthatóbb legyen.
- Route::get('/', function () {
-   $posts = Post::all();
-    return view('posts.index', ['posts' => $posts]);
- });
-
+// Kiszerveztük a Postcontrollerbe a logikát, hogy a web.php fájlban ne legyen túl sok kód. A gyökérútvonalra érkező GET kérést a PostController index() metódusa kezeli.  A ->name('posts.index') a route nevét adja meg, nem a Blade-nézetét! A kettőnek nem kötelező megegyeznie.
+Route::get('/', [PostController::class, 'index'])->name('posts.index');
+// Ennek a két sornak a sorrendje fontos, mert a Laravel a route-okat felülről lefelé értékeli. Ha a /posts/create route-ot a /posts/{post} route elé helyeznénk, akkor a Laravel a /posts/create útvonalat a /posts/{post} route-nak tekintené, és a create() metódus helyett a show() metódust hívná meg. Ezért mindig a konkrétabb route-okat kell előre helyezni az általánosabbakhoz képest. Ezt úgy hívjuk, hogy mintaillesztés (pattern matching).
+Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
 
 
 Route::get('/dashboard', function () {

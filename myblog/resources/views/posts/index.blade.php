@@ -8,7 +8,10 @@
     <ul>
         {{-- Egy lista az összes poszt címéről --}}
         @foreach ($posts as $post)
-            <li><a href="">{{ $post->title }}</a> </li>
+            {{-- A href attribútum a posts.show route-jához kapcsolódik. A route paramétereként a $post objektumot adjuk át, így a route generálja a megfelelő URL-t a poszt megtekintéséhez. --}}
+            <li><a href="{{ route('posts.show', ['post' => $post]) }}">{{ $post->title }}</a>
+                <i> {{ $post->author->name }} </i>
+            </li>
         @endforeach
     </ul>
 @endsection
