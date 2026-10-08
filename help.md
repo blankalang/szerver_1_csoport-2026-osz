@@ -170,47 +170,61 @@ Migrációk tiszta lappal és DatabaseSeeder.php futtatása:
 php artisan migrate:fresh --seed
 ```
 
-## SOS! Letöltöttem a repoból a projektet, de nem megy!
+## SOS! Letöltöttem a repóból a projektet, de nem megy!
+
+**Újabb Laravel-projektekben** a `composer.json` fájl `scripts` → `setup` része több kezdeti beállítási lépést egyetlen parancsba fog össze:
 
 ```sh
-composer install
+composer run setup
 ```
-Letölti és telepíti a PHP függőségeket a `composer.json` és `composer.lock` alapján a `vendor/` mappába.
 
-```sh
-npm i
-```
-Letölti és telepíti a frontend (Node.js) függőségeket a `package.json` alapján a `node_modules/` mappába.
+Ez telepíti a PHP- és frontendfüggőségeket, szükség esetén létrehozza a `.env` fájlt, generálja az alkalmazáskulcsot, lefuttatja a migrációkat, és elkészíti a frontend buildet (`npm run build`).
 
-```sh
-cp .env.example .env
-```
-Lemásolja a konfigurációs sablont `.env` néven, amelyben a helyi környezet beállításai találhatók.
+Forrás: [Laravel News – Setup Command Added to Laravel's Composer File (2025. október 2.)](https://laravel-news.com/setup-command-added-to-laravels-composer-file)
 
-```sh
-php artisan key:generate
-```
-Generál egy egyedi alkalmazáskulcsot (`APP_KEY`) a `.env` fájlba.
+**A következő korábbi lépéseket váltja ki:**
 
-```sh
-php artisan migrate
-```
-Lefuttatja az adatbázis migrációkat, és létrehozza a szükséges táblákat.
+~~`composer install`~~  
+~~Letölti és telepíti a PHP-függőségeket a `composer.json` és `composer.lock` alapján a `vendor/` mappába.~~
+
+~~`npm i`~~  
+~~Letölti és telepíti a frontend (Node.js) függőségeket a `package.json` alapján a `node_modules/` mappába.~~
+
+~~`cp .env.example .env`~~  
+~~Lemásolja a konfigurációs sablont `.env` néven.~~  
+*A `setup` csak akkor másolja a sablont, ha a `.env` még nem létezik.*
+
+~~`php artisan key:generate`~~  
+~~Generál egy egyedi alkalmazáskulcsot (`APP_KEY`) a `.env` fájlba.~~
+
+~~`php artisan migrate`~~  
+~~Lefuttatja az adatbázis-migrációkat, és létrehozza a szükséges táblákat.~~  
+*A `setup` ezt `php artisan migrate --force` paranccsal végzi.*
+
+**Ezeket viszont szükség esetén továbbra is külön kell futtatni:**
 
 ```sh
 php artisan db:seed
 ```
-Feltölti az adatbázist kezdeti adatokkal a seederek alapján.
+
+Feltölti az adatbázist kezdeti adatokkal a seederek alapján. **Az alapértelmezett `setup` ezt nem futtatja.**
 
 ```sh
 php artisan storage:link
 ```
-Létrehoz egy szimbolikus linket a `public/storage` és a `storage/app/public` között.
+
+Létrehoz egy szimbolikus linket a `public/storage` és a `storage/app/public` között. **Az alapértelmezett `setup` ezt sem futtatja.**
 
 ```sh
 composer run dev
 ```
-Elindítja a fejlesztői környezetet (Laravel szerver + Vite).
+
+Elindítja a projektben konfigurált fejlesztői folyamatokat (például a Laravel szervert és a Vite-ot). **Ezt a `setup` után külön kell elindítani.**
+
+**Fontos:** A `composer run setup` csak akkor működik, ha a projekt `composer.json` fájljában létezik `scripts.setup` bejegyzés. Régebbi projektekben hiányozhat, illetve egyes projektekben eltérő lépéseket tartalmazhat. Mindig a saját `composer.json` fájl az irányadó.
+
+
+
 ### Vezérlők generálása
 
 Új vezérlő:
