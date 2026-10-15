@@ -5,6 +5,13 @@
 {{-- Azértnemkellzáróbladetag,merta@section('title')egyrövidítettszintaxis,amiautomatikusanlezárjaaszekciót. --}}
 {{-- a @section('content') azt jelenti, hogy a bloglayout.blade.php fájlban definiált content szekció tartalmát szerkesztjük --}}
 @section('content')
+    {{--  A @if (Session::has('post-created')) azt jelenti, hogy ha a session-ben van egy 'post-created' kulcs, akkor a következő blokkot hajtjuk végre. A Session::has() metódus ellenőrzi, hogy létezik-e a megadott kulcs a session-ben. --}}
+    @if (Session::has('post-created'))
+        <div class="bg-green-300 rounded mb-2 py-2 text-center">
+            A(z) {{ Session::get('post-created') }} című bejegyzés létrehozva!
+        </div>
+    @endif
+
     <ul>
         {{-- Egy lista az összes poszt címéről --}}
         @foreach ($posts as $post)
@@ -14,4 +21,6 @@
             </li>
         @endforeach
     </ul>
+    {{-- A $posts->links() metódus segítségével megjelenítjük a lapozó gombokat. A paginate() metódus automatikusan kezeli az aktuális oldalt a query string alapján, így a felhasználó könnyen navigálhat az oldalak között. --}}
+    {{ $posts->links() }}
 @endsection

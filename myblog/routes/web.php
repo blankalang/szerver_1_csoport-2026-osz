@@ -12,10 +12,15 @@ Route::get('/', [PostController::class, 'index'])->name('posts.index');
 Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+// A /posts/{post}/edit route a PostController edit() metódusát hívja meg, ami visszaadja az edit.blade.php nézetet, ahol a felhasználó módosíthatja a poszt adatait.
+Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+//A /posts/{post} route a PostController update() metódusát hívja meg, ami visszaadja a update.blade.php nézetet, ahol a felhasználó módosíthatja a poszt adatait.
+Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
 
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    // A redirect() metódus segítségével átirányítjuk a felhasználót a posts.index route-ra, ami a bejegyzések listáját jeleníti meg.
+    return  redirect() -> route('posts.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
