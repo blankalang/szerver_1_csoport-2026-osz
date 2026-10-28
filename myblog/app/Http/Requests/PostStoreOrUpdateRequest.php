@@ -25,9 +25,9 @@ class PostStoreOrUpdateRequest extends FormRequest
     {
         // A validációs szabályokat a rules() metódusban adjuk meg. A title mező kötelező, string típusú. A content mező kötelező, string típusú, minimum 10 karakter hosszú. Az author_id mező kötelező, integer típusú, és léteznie kell a users táblában. A categories mező opcionális, tömb típusú. A categories.* mező opcionális, integer típusú, és léteznie kell a categories táblában.
         return [
+            //Innen töröltük a 'author_id' => 'required|integer|exists:users,id', sort, mert a bejelentkezett felhasználó az author_id, így nem kell a requestben megadni.
            'title' => 'required|string',
             'content' => 'required|string|min:10',
-            'author_id' => 'required|integer|exists:users,id',
             'categories' => 'array',
             'categories.*' => 'integer|distinct|exists:categories,id'
         ];

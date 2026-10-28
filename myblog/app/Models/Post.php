@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // A Fillable attribútumot használjuk a mass assignment protection beállításához
-#[Fillable(['title', 'content', 'is_public','author_id'])]
+#[Fillable(['title', 'content', 'is_public','author_id','image'])]
 
 class Post extends Model
 {

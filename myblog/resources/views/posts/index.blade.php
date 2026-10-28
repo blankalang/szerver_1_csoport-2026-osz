@@ -10,6 +10,16 @@
         <div class="bg-green-300 rounded mb-2 py-2 text-center">
             A(z) {{ Session::get('post-created') }} című bejegyzés létrehozva!
         </div>
+        {{--  Az elseif ág azt jelenti, hogy ha a fenti feltétel nem teljesül, de a session-ben van egy 'post-updated' kulcs, akkor a következő blokkot hajtjuk végre. A Session::get() metódus lekéri a megadott kulcs értékét a session-ből. --}}
+    @elseif (Session::has('post-updated'))
+        <div class="bg-green-300 rounded mb-2 py-2 text-center">
+            A(z) {{ Session::get('post-updated') }} című bejegyzés módosítva!
+        </div>
+        {{-- Az elseif ág azt jelenti, hogy ha a fenti feltételek nem teljesülnek, de a session-ben van egy 'post-deleted' kulcs, akkor a következő blokkot hajtjuk végre. --}}
+    @elseif (Session::has('post-deleted'))
+        <div class="bg-green-300 rounded mb-2 py-2 text-center">
+            A(z) {{ Session::get('post-deleted') }} című bejegyzés törölve!
+        </div>
     @endif
 
     <ul>
