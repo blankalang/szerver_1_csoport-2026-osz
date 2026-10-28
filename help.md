@@ -93,6 +93,12 @@ php artisan help adott_parancs
 ```
 Kiírja, hogy az adott parancs mire szolgál, milyen kapcsolói vannak, hogyan kell használni.
 
+```sh
+php artisan route:list
+```
+
+Kilistázza az alkalmazás útvonalait (HTTP metódus, URL, név, vezérlő, middleware).
+
 ### Modellek és migrációk generálása
 
 Új modell generálása:
@@ -182,25 +188,6 @@ Ez telepíti a PHP- és frontendfüggőségeket, szükség esetén létrehozza a
 
 Forrás: [Laravel News – Setup Command Added to Laravel's Composer File (2025. október 2.)](https://laravel-news.com/setup-command-added-to-laravels-composer-file)
 
-**A következő korábbi lépéseket váltja ki:**
-
-~~`composer install`~~  
-~~Letölti és telepíti a PHP-függőségeket a `composer.json` és `composer.lock` alapján a `vendor/` mappába.~~
-
-~~`npm i`~~  
-~~Letölti és telepíti a frontend (Node.js) függőségeket a `package.json` alapján a `node_modules/` mappába.~~
-
-~~`cp .env.example .env`~~  
-~~Lemásolja a konfigurációs sablont `.env` néven.~~  
-*A `setup` csak akkor másolja a sablont, ha a `.env` még nem létezik.*
-
-~~`php artisan key:generate`~~  
-~~Generál egy egyedi alkalmazáskulcsot (`APP_KEY`) a `.env` fájlba.~~
-
-~~`php artisan migrate`~~  
-~~Lefuttatja az adatbázis-migrációkat, és létrehozza a szükséges táblákat.~~  
-*A `setup` ezt `php artisan migrate --force` paranccsal végzi.*
-
 **Ezeket viszont szükség esetén továbbra is külön kell futtatni:**
 
 ```sh
@@ -213,7 +200,7 @@ Feltölti az adatbázist kezdeti adatokkal a seederek alapján. **Az alapértelm
 php artisan storage:link
 ```
 
-Létrehoz egy szimbolikus linket a `public/storage` és a `storage/app/public` között. **Az alapértelmezett `setup` ezt sem futtatja.**
+Szimbolikus linket hoz létre: public/storage → storage/app/public, így a feltöltött képek böngészőből is elérhetők.
 
 ```sh
 composer run dev
@@ -240,3 +227,22 @@ Resource vezérlő adott modell fölött egy paranccsal:
 ```sh
 php artisan make:controller FooController -r Foo
 ```
+### Middleware
+
+Új Laravel middleware osztály generálása:
+
+```sh
+php artisan make:middleware MiddlewareNeve
+```
+
+A parancs létrehoz egy új middleware osztályt az `app/Http/Middleware` mappában.
+
+### Jogosultságkezelés (Policy)
+
+Új Policy osztály generálása a `Post` modellhez:
+
+```sh
+php artisan make:policy PostPolicy --model=Post
+```
+
+Létrehozza az `app/Policies/PostPolicy.php` fájlt, amelyben a bejegyzésekkel kapcsolatos jogosultságokat szabályozhatjuk.
