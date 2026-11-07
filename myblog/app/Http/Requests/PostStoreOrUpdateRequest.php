@@ -29,7 +29,9 @@ class PostStoreOrUpdateRequest extends FormRequest
            'title' => 'required|string',
             'content' => 'required|string|min:10',
             'categories' => 'array',
-            'categories.*' => 'integer|distinct|exists:categories,id'
+            'categories.*' => 'integer|distinct|exists:categories,id',
+            // Az image_file mező opcionális, image típusú, csak JPEG, PNG vagy GIF formátum engedélyezett, és maximum 2 MB méretű lehet. A mimetypes szabály segítségével korlátozzuk a feltölthető fájl típusát. A max szabály segítségével korlátozzuk a feltölthető fájl méretét.
+            'image_file' => 'nullable|image|mimetypes:image/jpeg,image/png,image/gif|max:2048'
         ];
     }
 
@@ -38,7 +40,12 @@ class PostStoreOrUpdateRequest extends FormRequest
         // A messages() metódusban megadhatjuk a validációs hibákhoz tartozó egyedi üzeneteket. Ha a content mező nem éri el a minimum 10 karaktert, akkor a megadott üzenetet jelenítjük meg.
 
    return [
-            'content.min' => 'A tartalom legalább 10 karakter kell legyen!'
+            'content.min' => 'A tartalom legalább 10 karakter kell legyen!',
+            // Az image_file mezőhöz tartozó egyedi üzeneteket is megadhatjuk. Ha a feltöltött fájl nem kép, vagy nem a megadott formátumok egyikébe tartozik, akkor a megadott üzenetet jelenítjük meg.
+            'image_file.image' => 'Csak képfájl tölthető fel!',
+            //  Ha a feltöltött fájl nem a megadott formátumok egyikébe tartozik, akkor a megadott üzenetet jelenítjük meg.
+            'image_file.mimetypes' => 'Csak JPG, PNG vagy GIF formátum engedélyezett!'
+
         ];
     }
 }

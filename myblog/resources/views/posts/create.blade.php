@@ -7,7 +7,7 @@
     <h2 class="text-2xl">
         Új bejegyzés létrehozása</h2>
     {{-- Ezzel az űrlappal egy új posztot tudunk létrehozni. Az action attribútum a posts.store route-jához kapcsolódik. A method attribútum a POST kérés típusát adja meg. --}}
-    {{-- Az enctype attribútum a multipart/form-data értéket kapja, ami lehetővé teszi a fájlok feltöltését az űrlapon keresztül. Aa hiányzik, akkornem megy át a fájl, akkor fájlt nem, csak szöveget küld át. A multipart/form-data lehetővé teszi, hogy az űrlap fájlokat (pl. képeket) is elküldjön a szervernek.Az enctype meghatározza, hogyan csomagolja össze a böngésző az űrlap adatait elküldéskor. multipart/form-data: képes bináris adatot küldeni (pl. kép), az adatokat részekre (multipart) bontja
+    {{-- Az enctype attribútum a multipart/form-data értéket kapja, ami lehetővé teszi a fájlok feltöltését az űrlapon keresztül. Aa hiányzik, akkornem megy át a fájl, akkor fájlt nem, csak szöveget küld át. A multipart/form-data lehetővé teszi, hogy az űrlap fájlokat (pl. képeket) is elküldjön a szervernek.Az enctype meghatározza, hogyan csomagolja össze a böngésző az űrlap adatait elküldéskor. multipart/form-data: képes bináris adatot küldeni (pl. kép), az adatokat részekre (multipart) bontja.
 --}}
     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -27,6 +27,10 @@
         {{-- Az állapottartás miatt a checkbox értékét is az old() függvénnyel állítjuk be. Ha a felhasználó korábban bepipálta a checkboxot, akkor az old('is_public') értéke true lesz, és a checkbox be lesz pipálva. Ha nem pipálta be, akkor az old('is_public') értéke false lesz, és a checkbox üres marad. --}}
         Publikus? <input type="checkbox" name="is_public" value="1" {{ old('is_public') ? 'checked' : '' }}>
         Kép: <input type="file" name="image_file"><br>
+        {{-- A @error('image_file') direktíva segítségével ellenőrizzük, hogy van-e hiba a image_file mezőben. Ha van, akkor a {{ $message }} változó tartalmazza a hibaüzenetet, amit megjelenítünk a felhasználónak. A PostController store() metódusában validáltuk a bemenetet, azért lesznek automatikusan generált hibaüzenetek. --}}
+        @error('image_file')
+            <span style="color: red">{{ $message }}</span>
+        @enderror
         <h3 class="text-xl">Kategóriák</h3>
         {{-- Végig iterálunk az összes kategórián, és létrehozunk egy checkbox elemet minden kategóriához. --}}
         @foreach ($categories as $category)

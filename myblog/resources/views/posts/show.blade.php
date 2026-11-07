@@ -20,9 +20,9 @@
     @endcan
     @can('delete', $post)
         <form action="{{ route('posts.destroy', ['post' => $post]) }}" method="POST">
-            <!-- A @csrf direktíva a Laravelben a Cross-Site Request Forgery (CSRF) támadások elleni védelemhez szükséges. Ez a direktíva automatikusan generál egy rejtett mezőt a formban, amely tartalmazza a CSRF token-t. Amikor a formot elküldik, a szerver ellenőrzi, hogy a token érvényes-e, így biztosítva, hogy a kérés valóban az alkalmazásból származik, és nem egy rosszindulatú forrásból. -->
+            {{-- A @csrf direktíva a Laravelben a Cross-Site Request Forgery (CSRF) támadások elleni védelemhez szükséges. Ez a direktíva automatikusan generál egy rejtett mezőt a formban, amely tartalmazza a CSRF token-t. Amikor a formot elküldik, a szerver ellenőrzi, hogy a token érvényes-e, így biztosítva, hogy a kérés valóban az alkalmazásból származik, és nem egy rosszindulatú forrásból. --}}
             @csrf
-            <!-- A @method('DELETE') direktíva a HTML formban jelzi, hogy a form által küldött HTTP kérés DELETE típusú legyen, mivel a HTML formok alapértelmezés szerint csak GET és POST kéréseket támogatnak. Laravelben a @method direktíva segítségével lehetőség van más HTTP metódusok (például PUT, PATCH, DELETE) használatára is a formokon keresztül. Ezt hívjuk method spoofingnek -->
+            {{-- A @method('DELETE') direktíva a HTML formban jelzi, hogy a form által küldött HTTP kérés DELETE típusú legyen, mivel a HTML formok alapértelmezés szerint csak GET és POST kéréseket támogatnak. Laravelben a @method direktíva segítségével lehetőség van más HTTP metódusok (például PUT, PATCH, DELETE) használatára is a formokon keresztül. Ezt hívjuk method spoofingnek  --}}
             @method('DELETE')
             <a href="#" onclick="this.closest('form').submit()">Törlés</a>
         </form>

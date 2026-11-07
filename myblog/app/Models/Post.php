@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // A Fillable attribútumot használjuk a mass assignment protection beállításához
+//Az image mezőt beírtuk a Fillable attribútumba, hogy a mass assignment protection beállításához hozzáadjuk az image mezőt is, így a Post modelben lehetőség van az image mező értékének tömeges hozzárendelésére (mass assignment).
 #[Fillable(['title', 'content', 'is_public','author_id','image'])]
 
 class Post extends Model
