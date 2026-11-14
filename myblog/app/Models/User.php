@@ -9,15 +9,18 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 //'is_admin'-t beírtam, mivel a User modelben is szerepel, és így a mass assignment protection miatt nem lehetne beállítani az értékét.
-#[Fillable(['name', 'email', 'password','is_admin'])]
+#[Fillable(['name', 'email', 'password', 'is_admin'])]
 #[Hidden(['password', 'remember_token'])]
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    //A HasApiTokens trait a Laravel Sanctum része, és API token-kezelési funkcionalitást ad a User modellhez. (A trait egy „újrafelhasználható kódrészlet-csomag”, amit több osztály is be tud húzni.)  HasApiTokens teszi lehetővé: token létrehozását ($token = $user->createToken('api-token')->plainTextToken;), listázását ($user->tokens;)), törlését ($user->tokens()->delete();)).
+
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * Get the attributes that should be cast.
@@ -32,9 +35,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function posts(){
+    public function posts()
+    {
         // a hasMany kapcsolatot a User modelben is definiáljuk, hogy a felhasználóhoz tartozó posztokat lekérdezhessük.
         return $this->hasMany(Post::class, 'author_id');
     }
-
 }
