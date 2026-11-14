@@ -246,3 +246,11 @@ php artisan make:policy PostPolicy --model=Post
 ```
 
 Létrehozza az `app/Policies/PostPolicy.php` fájlt, amelyben a bejegyzésekkel kapcsolatos jogosultságokat szabályozhatjuk.
+
+### REST API fejlesztés
+
+Telepíti és konfigurálja a Laravel API fejlesztéshez szükséges komponenseit, tipikusan a Sanctum alapú tokenes autentikációt és az ehhez szükséges infrastruktúrát:
+
+```sh
+php artisan install:api
+```
