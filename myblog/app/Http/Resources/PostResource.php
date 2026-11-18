@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 //A PostResource osztály a Post modelhez tartozó adatokat alakítja át JSON formátumra, amikor az API válaszban visszaadjuk őket. A toArray metódusban definiáljuk, hogy mely mezőket szeretnénk visszaadni a JSON válaszban, és hogyan szeretnénk azokat formázni.
 class PostResource extends JsonResource
@@ -24,8 +25,16 @@ class PostResource extends JsonResource
             // Az 'is_public' mezőt boolval() függvénnyel alakítjuk át logikai értékké, hogy a JSON válaszban true vagy false értéket kapjunk, ahelyett, hogy 0 vagy 1 lenne.
             'is_public' => boolval($this->is_public),
             'author_id' => $this->author_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+
+            //A Carbon osztály segítségével a created_at és updated_at mezőket formázzuk, hogy a JSON válaszban olvasható dátum/idő formátumban jelenjenek meg.
+            'created_at' => Carbon::parse($this->created_at)->toDateTimeString(),
+            'updated_at' => Carbon::parse($this->updated_at)->toDateTimeString(),
+            // A 'categories' mező csak akkor kerül a JSON-válaszba,
+            // ha a kategóriák kapcsolata már be van töltve.
+            // A CategoryResource::collection() a kategóriák
+            // adatait a kívánt JSON-struktúrára alakítja.
+            'categories' => CategoryResource::collection($this->whenLoaded('categories'))
+
         ];
     }
 }

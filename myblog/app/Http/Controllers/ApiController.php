@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Post;
 use App\Http\Resources\PostResource;
+use App\Http\Requests\PostStoreOrUpdateRequest;
+use App\Http\Resources\CategoryResource;
 
 //ApiController fájl feladata, hogy a postokkal és a bejelentkezéssel kapcsolatos API végpontokat kiszolgálja, JSON válaszokat adjon vissza, és kezelje az autentikációt, a validációt és a hibakezelést.
 class ApiController extends Controller
@@ -57,19 +59,64 @@ class ApiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    // A store() metódus új posztot hoz létre az adatbázisban.
+    // A PostStoreOrUpdateRequest automatikusan validálja
+    // a beérkező adatokat a metódus végrehajtása előtt.
+    // A metódus lekéri a validált adatokat, beállítja
+    // az is_public értékét és a bejelentkezett felhasználó
+    // azonosítóját (author_id), majd létrehozza a posztot a Post::create() metódussal.
+    // Végül a PostResource segítségével visszaadja azt JSON formátumban a PostResource segítségével.
+
+    public function store(PostStoreOrUpdateRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $validated['is_public'] = $request->boolean('is_public');
+        $validated['author_id'] = $request->user()->id;
+        $post = Post::create($validated);
+        return new PostResource($post);
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+
+    //Az update() metódus egy meglévő posztot frissít az adatbázisban. A metódus a Request objektumot és a poszt azonosítóját várja paraméterként. Először validálja az azonosítót, majd lekéri a posztot a Post::findOrFail() metódussal. Ezután ellenőrzi, hogy a bejelentkezett felhasználó admin-e, vagy ő a poszt szerzője. Ha nem, 403-as HTTP-státuszkódú JSON-választ ad vissza. Ha a felhasználó jogosult a frissítésre, validálja a beérkező adatokat (title, content, is_public, author_id), majd frissíti a posztot a $post->update() metódussal. Végül visszaadja a frissített posztot JSON formátumban a PostResource segítségével.
+    public function update(Request $request, string $post)
     {
-        //
+        validator(
+            ['post' => $post],
+            ['post' => 'required|integer']
+        )->validate();
+        $post = Post::findOrFail($post);
+        if (!$request->user()->is_admin && $request->user()->id !== $post->author_id)
+            return response()->json(["message" => "You cannot do this."], 403);
+        $validated = $request->validate([
+            "title" => "string|min:10",
+            "content" => "string|max:999",
+            "is_public" => "boolean",
+            'author_id' => "integer|exists:users,id"
+        ]);
+        $post->update($validated);
+        return new PostResource($post);
     }
+    //Az indexCategories() metódus egy adott poszthoz tartozó kategóriákat adja vissza JSON formátumban. A metódus a poszt azonosítóját várja paraméterként. Először validálja az azonosítót, majd lekéri a posztot a Post::findOrFail() metódussal. Végül visszaadja a poszthoz tartozó kategóriákat a CategoryResource::collection() metódus segítségével, amely a kategóriák adatait formázza és alakítja át a kívánt struktúrába.
+    public function indexCategories(string $post)
+    {
+        validator(
+            ['post' => $post],
+            ['post' => 'required|integer']
+        )->validate();
+        $post = Post::findOrFail($post);
+        return CategoryResource::collection($post->categories);
+    }
+    //Az indexWithCategories() metódus az összes posztot adja vissza a hozzájuk tartozó kategóriákkal együtt JSON formátumban. A metódus lekéri az összes posztot az adatbázisból a Post::with('categories')->get() metódussal, amely előre betölti a posztokhoz tartozó kategóriákat (eager loading). Végül a PostResource::collection() metódus segítségével alakítja át a posztokat és a kategóriákat JSON formátumra.
+    public function indexWithCategories()
+    {
+        $posts = Post::with('categories')->get();
+        return PostResource::collection($posts);
+    }
+
 
     /**
      * Remove the specified resource from storage.
