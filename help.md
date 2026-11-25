@@ -254,3 +254,36 @@ Telepíti és konfigurálja a Laravel API fejlesztéshez szükséges komponensei
 ```sh
 php artisan install:api
 ```
+### GraphQL API fejlesztés
+
+Telepíti a Lighthouse GraphQL csomagot és annak függőségeit:
+
+```sh
+php composer require nuwave/lighthouse 
+```
+Létrehozza a projekt graphql/schema.graphql fájlát:
+
+```sh
+php artisan vendor:publish --tag=lighthouse-schema 
+```
+
+Telepíti  a GraphiQL felületet a GrapQL API teszteléshez:
+
+```sh
+php composer require mll-lab/laravel-graphiql  
+```
+GraphQL lekérdezéshez (query) tartozó resolver fájlt generál:
+
+```sh
+php artisan lighthouse:query 
+```
+Egy típus mezőjéhez (field) tartozó resolver fájlt generál:
+
+```sh
+php artisan lighthouse:field 
+```
+GraphQL adatmódosító művelethez (Mutation) tartozó resolver fájlt generál:
+
+```sh
+php artisan lighthouse:mutation
+```
