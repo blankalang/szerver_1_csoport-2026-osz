@@ -24,3 +24,5 @@ Route::post('/posts', [ApiController::class, 'store'])->middleware('auth:sanctum
 Route::patch('/posts/{post}', [ApiController::class, 'update'])->middleware('auth:sanctum');
 //A Route::get('/posts/{post}/categories', [ApiController::class, 'indexCategories']); sor azt jelenti, hogy amikor egy GET kérést küldenek a /api/posts/{post}/categories útvonalra (ahol {post} egy változó, amely a poszt azonosítóját jelöli), az ApiController osztály indexCategories metódusa fogja kezelni azt. Ez a metódus visszaadja a megadott azonosítóval rendelkező poszthoz tartozó kategóriákat.
 Route::get('/posts/{post}/categories', [ApiController::class, 'indexCategories']);
+// A Route::patch('/posts/{post}/categories', [ApiController::class, 'updateCategories']); sor azt jelenti, hogy amikor egy PATCH kérést küldenek a /api/posts/{post}/categories útvonalra (ahol {post} egy változó, amely a poszt azonosítóját jelöli), az ApiController osztály updateCategories metódusa fogja kezelni azt. Ez a metódus frissíti a megadott azonosítóval rendelkező poszthoz tartozó kategóriákat.
+Route::patch('/posts/{post}/categories', [ApiController::class, 'updateCategories']);

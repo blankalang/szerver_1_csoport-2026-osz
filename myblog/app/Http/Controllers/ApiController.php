@@ -117,6 +117,39 @@ class ApiController extends Controller
         return PostResource::collection($posts);
     }
 
+    //Az updateCategories() metódus egy adott poszthoz tartozó kategóriákat frissíti. A metódus a Request objektumot és a poszt azonosítóját várja paraméterként. Először validálja az azonosítót, majd lekéri a posztot a Post::findOrFail() metódussal. Ezután validálja a beérkező adatokat, amelyek tartalmazhatnak "add" és "remove" tömböket a kategóriák azonosítóival. A metódus hozzáadja az új kategóriákat a poszthoz a syncWithoutDetaching() metódussal, és eltávolítja a megadott kategóriákat a detach() metódussal. Végül visszaad egy tömböt, amely tartalmazza az újonnan hozzáadott kategóriákat, azokat, amelyek már hozzá voltak adva, az eltávolított kategóriákat és azokat, amelyek már el lettek távolítva.
+    public function updateCategories(Request $request, string $post)
+    {
+        validator(
+            ['post' => $post],
+            ['post' => 'required|integer']
+        )->validate();
+        $post = Post::findOrFail($post);
+        //A validated tömbben az "add" kulcs tartalmazza az újonnan hozzáadni kívánt kategóriák azonosítóit, a "remove" kulcs tartalmazza az eltávolítani kívánt kategóriák azonosítóit. A validációs szabályok biztosítják, hogy mindkét kulcs egy tömb legyen, amely egész számokat tartalmaz, amelyek léteznek a categories táblában, és hogy ne legyenek átfedések az "add" és "remove" tömbök között.
+        $validated = $request->validate([
+            "add" => "array",
+            "remove" => "array",
+            "add.*" => "integer|distinct|exists:categories,id|not_in:" . implode(",", $request->input('remove') ?? []),
+            "remove.*" => "integer|distinct|exists:categories,id|not_in:" . implode(",", $request->input('add') ?? []),
+        ]);
+        //A $validated["add"] ??= []; és a $validated["remove"] ??= []; sorok biztosítják, hogy ha az "add" vagy "remove" kulcs nem szerepel a beérkező kérésben, akkor azok üres tömbként legyenek inicializálva. Ez megakadályozza a hibákat a későbbi műveletek során, amikor a kategóriák hozzáadását vagy eltávolítását végezzük.
+        $validated["add"] ??= [];
+        $validated["remove"] ??= [];
+        $start = $post->categories->pluck('id')->toArray();
+        //Az attach() metódus hozzáadja a megadott kategóriákat a poszthoz, de ha egy kategória már hozzá van rendelve, akkor hibát dob. A syncWithoutDetaching() metódus hozzáadja a megadott kategóriákat a poszthoz, de nem távolítja el a már meglévő kategóriákat. A detach() metódus eltávolítja a megadott kategóriákat a poszthoz rendelt kategóriák közül, de ha egy kategória nincs hozzárendelve, akkor nem történik semmi.A syncWithoutDetaching() metódus használata biztosítja, hogy a már meglévő kategóriák ne kerüljenek eltávolításra, miközben az új kategóriák hozzáadódnak. ezzel megoldottuk a vak hozzáadás és eltávolítás problémáját.
+        // $post->categories()->attach($validated["add"]);
+        $post->categories()->syncWithoutDetaching($validated["add"]);
+        $post->categories()->detach($validated["remove"]);
+        // return CategoryResource::collection($post -> categories);
+        return [
+            //A visszaadott tömbben az "added" kulcs tartalmazza az újonnan hozzáadott kategóriák azonosítóit, a "was already added" kulcs tartalmazza azokat a kategóriákat, amelyek már hozzá voltak rendelve a poszthoz, a "removed" kulcs tartalmazza az eltávolított kategóriák azonosítóit, és a "was already removed" kulcs tartalmazza azokat a kategóriákat, amelyek már el lettek távolítva a poszthoz rendelt kategóriák közül.
+            "added" => array_diff($validated["add"], $start),
+            "was already added" => array_values(array_intersect($start, $validated["add"])),
+            "removed" => array_values(array_intersect($start, $validated["remove"])),
+            "was already removed" => array_diff($validated["remove"], $start)
+        ];
+    }
+
 
     /**
      * Remove the specified resource from storage.
